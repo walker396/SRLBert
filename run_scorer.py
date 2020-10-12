@@ -288,6 +288,7 @@ def transform_tag_features(features, tag_tokenizer, max_seq_length):
                     #tmp_input_tag_ids = input_que_tag_ids[idx]
                     doc_input_tag_ids = doc_tag_ids[:len_seq_b - 1] + [2] #SEP
                     input_tag_id = query_tag_ids + doc_input_tag_ids
+                    print(input_tag_id)  #johnny add
                     while len(input_tag_id) < max_seq_length:
                         input_tag_id.append(0)
                     assert len(input_tag_id) == len(example.input_ids)
@@ -517,7 +518,7 @@ def main():
                            layer_num=1,
                            output_dim=10,
                            dropout_prob=0.1,
-                           num_aspect=3)
+                           num_aspect=9)
     # Prepare model
     cache_dir = args.cache_dir if args.cache_dir else os.path.join(PYTORCH_PRETRAINED_BERT_CACHE, 'distributed_{}'.format(args.local_rank))
     model = BertForSequenceScoreTag.from_pretrained(args.bert_model,
@@ -582,6 +583,7 @@ def main():
         all_label_ids = torch.tensor([f.label_id for f in train_features], dtype=torch.float)
         all_start_end_idx = torch.tensor([f.orig_to_token_split_idx for f in train_features], dtype=torch.long)
         all_input_tag_ids = torch.tensor([f.input_tag_ids for f in train_features], dtype=torch.long)
+        print("^^^^^^^^^^^^^all_input_tag_ids^^^^^^^^",all_input_tag_ids[0])
         train_data = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_start_end_idx, all_input_tag_ids, all_label_ids)
         if args.local_rank == -1:
             train_sampler = RandomSampler(train_data)
@@ -721,10 +723,11 @@ def main():
             # epoch = 1
             output_model_file = os.path.join(args.output_dir, str(epoch) + "_pytorch_model.bin")
             model_state_dict = torch.load(output_model_file)
-            predict_model = BertForSequenceClassificationTag.from_pretrained(args.bert_model,
-                                                                             state_dict=model_state_dict,
-                                                                             num_labels=num_labels,
-                                                                             tag_config=tag_config)
+            # predict_model = BertForSequenceClassificationTag.from_pretrained(args.bert_model,
+            #                                                                  state_dict=model_state_dict,
+            #                                                                  num_labels=num_labels,
+            #                                                                  tag_config=tag_config)
+            predict_model = BertForSequenceScoreTag.from_pretrained(args.bert_model, state_dict=model_state_dict,tag_config=tag_config)
             predict_model.to(device)
             predict_model.eval()
             eval_loss, eval_accuracy = 0, 0
