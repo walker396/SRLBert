@@ -583,7 +583,7 @@ def main():
         all_label_ids = torch.tensor([f.label_id for f in train_features], dtype=torch.float)
         all_start_end_idx = torch.tensor([f.orig_to_token_split_idx for f in train_features], dtype=torch.long)
         all_input_tag_ids = torch.tensor([f.input_tag_ids for f in train_features], dtype=torch.long)
-        print("^^^^^^^^^^^^^all_input_tag_ids^^^^^^^^",all_input_tag_ids[0])
+        print("^^^^^^^^^^^^^all_input_tag_ids^^^^^^^^",all_input_tag_ids.size())
         train_data = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_start_end_idx, all_input_tag_ids, all_label_ids)
         if args.local_rank == -1:
             train_sampler = RandomSampler(train_data)
