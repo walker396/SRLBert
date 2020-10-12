@@ -288,7 +288,7 @@ def transform_tag_features(features, tag_tokenizer, max_seq_length):
                     #tmp_input_tag_ids = input_que_tag_ids[idx]
                     doc_input_tag_ids = doc_tag_ids[:len_seq_b - 1] + [2] #SEP
                     input_tag_id = query_tag_ids + doc_input_tag_ids
-                    print(input_tag_id)  #johnny add
+                    # print(input_tag_id)  #johnny add
                     while len(input_tag_id) < max_seq_length:
                         input_tag_id.append(0)
                     assert len(input_tag_id) == len(example.input_ids)

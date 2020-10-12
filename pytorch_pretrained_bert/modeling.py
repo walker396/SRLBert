@@ -1109,6 +1109,8 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         use_tag = True
         if use_tag:
             num_aspect = input_tag_ids.size(1)
+            print("^^^^^^num_aspect^^^^^^^", num_aspect)
+            print("^^^^^^input_tag_ids^^^^^^^", input_tag_ids.size(),input_tag_ids.size(-1))
             input_tag_ids = input_tag_ids[:,:,:max_seq_len]
             flat_input_tag_ids = input_tag_ids.view(-1, input_tag_ids.size(-1))
             print("^^^^^^flat_que_tag^^^^^^^", flat_input_tag_ids.size())
