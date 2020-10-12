@@ -281,16 +281,17 @@ def transform_tag_features(features, tag_tokenizer, max_seq_length):
             input_que_tag_ids = []
             for idx, query_tag_ids in enumerate(tag_ids_list_a):
                 query_tag_ids = [1] + query_tag_ids[:len_seq_a - 2] + [2] #CLS and SEP
-                input_que_tag_ids.append(query_tag_ids)
+                #input_que_tag_ids.append(query_tag_ids)
                 # construct input doc tag ids with same length as input ids
-            for idx, doc_tag_ids in enumerate(tag_ids_list_b):
-                tmp_input_tag_ids = input_que_tag_ids[idx]
-                doc_input_tag_ids = doc_tag_ids[:len_seq_b - 1] + [2] #SEP
-                input_tag_id = tmp_input_tag_ids + doc_input_tag_ids
-                while len(input_tag_id) < max_seq_length:
-                    input_tag_id.append(0)
-                assert len(input_tag_id) == len(example.input_ids)
-                input_tag_ids.append(input_tag_id)
+                # Johnny update change to doc for-loop under query for-loop
+                for idx, doc_tag_ids in enumerate(tag_ids_list_b):
+                    #tmp_input_tag_ids = input_que_tag_ids[idx]
+                    doc_input_tag_ids = doc_tag_ids[:len_seq_b - 1] + [2] #SEP
+                    input_tag_id = query_tag_ids + doc_input_tag_ids
+                    while len(input_tag_id) < max_seq_length:
+                        input_tag_id.append(0)
+                    assert len(input_tag_id) == len(example.input_ids)
+                    input_tag_ids.append(input_tag_id)
         else:
             for idx, query_tag_ids in enumerate(tag_ids_list_a):
                 query_tag_ids = [1] + query_tag_ids[:len_seq_a - 2] + [2] #CLS and SEP
