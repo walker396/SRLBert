@@ -1132,7 +1132,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
 
         else:
             sequence_output = bert_output
-        torch.transform
+        # torch.transform
 
         first_token_tensor = sequence_output[:, 0]
         pooled_output = self.pool(first_token_tensor)
