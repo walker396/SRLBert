@@ -1111,7 +1111,9 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             num_aspect = input_tag_ids.size(1)
             print("^^^^^^num_aspect^^^^^^^", num_aspect)
             print("^^^^^^input_tag_ids^^^^^^^", input_tag_ids.size(),input_tag_ids.size(-1))
+
             input_tag_ids = input_tag_ids[:,:,:max_seq_len]
+            print("^^^^^^input_tag_ids1^^^^^^^",input_tag_ids.size(),input_tag_ids.size(-1))
             flat_input_tag_ids = input_tag_ids.view(-1, input_tag_ids.size(-1))
             print("^^^^^^flat_que_tag^^^^^^^", flat_input_tag_ids.size())
             tag_output = self.tag_model(flat_input_tag_ids, num_aspect)
