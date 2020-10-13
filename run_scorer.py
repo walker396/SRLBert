@@ -265,7 +265,7 @@ def convert_examples_to_features(examples, label_list, max_seq_length, tokenizer
 def transform_tag_features(features, tag_tokenizer, max_seq_length):
     #now convert the tags into ids
     #print("vocab_size: ",len(tag_vocab))
-    max_num_aspect = 3
+    max_num_aspect = 9
     new_features = []
     for example in features:
         token_tag_sequence_a = example.token_tag_sequence_a
