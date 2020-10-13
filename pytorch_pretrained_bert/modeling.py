@@ -1126,11 +1126,13 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             print("^^^^^^tag_output^^^^^^^", tag_output.size())
             print("^^^^^^bert_output^^^^^^^", bert_output.size())
             sequence_output = torch.cat((bert_output, tag_output), 2)
+            print("^^^^^^sequence_output^^^^^^^", sequence_output.size())
             # print("tag", tag_output.size())
             # print("bert", bert_output.size())
 
         else:
             sequence_output = bert_output
+        torch.transform
 
         first_token_tensor = sequence_output[:, 0]
         pooled_output = self.pool(first_token_tensor)
