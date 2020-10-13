@@ -137,7 +137,7 @@ class TagEmebedding(nn.Module):
         input = embed.view(-1, num_aspect, flat_input_ids.size(1), self.hidden_size)
         # linear
         logit = self.fc(input)
-        # print("logit", logit.size())
+        print("logit", logit.size())
         return logit
 
 

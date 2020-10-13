@@ -1123,6 +1123,8 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
                                                                       max_seq_len, -1)
             print("^^^^^^tag_output^^^^^^^", tag_output.size())
             tag_output = self.dense(tag_output)
+            print("^^^^^^tag_output^^^^^^^", tag_output.size())
+            print("^^^^^^bert_output^^^^^^^", bert_output.size())
             sequence_output = torch.cat((bert_output, tag_output), 2)
             # print("tag", tag_output.size())
             # print("bert", bert_output.size())
