@@ -1146,8 +1146,9 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         else:
             sequence_output = bert_output
         # torch.transform
-
-        first_token_tensor = sequence_output[:, 0]
+        # Johnny update
+        # first_token_tensor = sequence_output[:, 0]
+        first_token_tensor = sequence_output.view(sequence_output.size(0)*sequence_output.size(1)*sequence_output.size(2),-1)
         pooled_output = self.pool(first_token_tensor)
         pooled_output = self.activation(pooled_output)
         pooled_output = self.dropout(pooled_output)
