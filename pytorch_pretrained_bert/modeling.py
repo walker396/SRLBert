@@ -1131,9 +1131,9 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             #---end----concatenate m srl predictions to a sequence
             #--start---
             x1 = bert_output[:, None, :, :]
-            print(x1)
+            # print(x1)
             bert_output = x1.repeat(1, num_aspect, 1, 1)
-            print(bert_output)
+            # print(bert_output)
             #---end----
 
             print("^^^^^^tag_output^^^^^^^", tag_output.size())
@@ -1146,6 +1146,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         else:
             sequence_output = bert_output
         # torch.transform
+        sequence_output = self.dense(sequence_output)
         # Johnny update
         # first_token_tensor = sequence_output[:, 0]
         first_token_tensor = sequence_output.view(sequence_output.size(0)*sequence_output.size(1)*sequence_output.size(2),-1)
@@ -1153,7 +1154,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         pooled_output = self.activation(pooled_output)
         pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)
-
+        print("++++labels:",labels.size())
         if labels is not None:
             loss_fct = MSELoss()
             loss = loss_fct(logits.view(-1), labels.view(-1))
