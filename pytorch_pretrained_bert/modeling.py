@@ -1108,7 +1108,8 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             cnn_bert = cnn_bert.cuda()
 
         bert_output = self.cnn(cnn_bert, max_word_len)
-
+        print("+++++++bert_output size:++", bert_output.size())
+        print("+++++++bert_output:++", bert_output)
         use_tag = True
         if use_tag:
             num_aspect = input_tag_ids.size(1)
@@ -1137,7 +1138,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
 
             print("^^^^^^tag_output^^^^^^^", tag_output.size())
             print("^^^^^^bert_output^^^^^^^", bert_output.size())
-            sequence_output = torch.cat((bert_output, tag_output), 2)
+            sequence_output = torch.cat((bert_output, tag_output), 3)
             print("^^^^^^sequence_output^^^^^^^", sequence_output.size())
             # print("tag", tag_output.size())
             # print("bert", bert_output.size())
