@@ -1046,7 +1046,10 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         if tag_config is not None:
             hidden_size = config.hidden_size + tag_config.hidden_size
             self.tag_model = TagEmebedding(tag_config)
+
             self.dense = nn.Linear(tag_config.num_aspect * tag_config.hidden_size, tag_config.hidden_size)
+            # Johnny
+            # self.dense = nn.Transformer(d_model=tag_config.num_aspect * tag_config.hidden_size, nhead=16, num_encoder_layers=12)
         else:
             hidden_size = config.hidden_size
         use_tag = True
@@ -1117,12 +1120,21 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             flat_input_tag_ids = input_tag_ids.view(-1, input_tag_ids.size(-1))
             print("^^^^^^flat_que_tag^^^^^^^", flat_input_tag_ids.size())
             tag_output = self.tag_model(flat_input_tag_ids, num_aspect)
-            print("^^^^^^tag_output^^^^^^^", tag_output.size())
+            print("^^^^^^embedding tag_output^^^^^^^", tag_output.size())
+            #---start----concatenate m srl predictions to a sequence
             # batch_size, que_len, num_aspect*tag_hidden_size
-            tag_output = tag_output.transpose(1, 2).contiguous().view(batch_size,
-                                                                      max_seq_len, -1)
-            print("^^^^^^tag_output^^^^^^^", tag_output.size())
-            tag_output = self.dense(tag_output)
+            #tag_output = tag_output.transpose(1, 2).contiguous().view(batch_size,max_seq_len, -1)
+            #print("^^^^^^tag_output^^^^^^^", tag_output.size())
+
+            #tag_output = self.dense(tag_output)
+            #---end----concatenate m srl predictions to a sequence
+            #--start---
+            x1 = bert_output[:, None, :, :]
+            print(x1)
+            bert_output = x1.repeat(1, num_aspect, 1, 1)
+            print(bert_output)
+            #---end----
+
             print("^^^^^^tag_output^^^^^^^", tag_output.size())
             print("^^^^^^bert_output^^^^^^^", bert_output.size())
             sequence_output = torch.cat((bert_output, tag_output), 2)

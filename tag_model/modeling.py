@@ -122,6 +122,9 @@ class TagEmebedding(nn.Module):
         super(TagEmebedding, self).__init__()
         # Embedding
         self.hidden_size = config.hidden_size
+        #onehot
+        # self.embed = OneHotTagEmbeddings(config)
+        #Johnny change
         self.embed = TagEmbeddings(config)
         # Linear
         #self.fc = nn.Linear(config.hidden_size * 2, config.output_dim)
