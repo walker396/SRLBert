@@ -704,7 +704,7 @@ def main():
                         writer.write("Epoch: %s, %s = %s\n" % (str(epoch), key, str(result[key])))
             logger.info("best epoch: %s, result:  %s", str(best_epoch), str(best_result))
 
-    if args.do_eval:
+    elif args.do_eval:
         #for epoch in ["1"]:
         total_pred1, total_labels1 = [], []
         for epoch in trange(int(args.num_train_epochs), desc="Epoch"):
@@ -768,11 +768,11 @@ def main():
 
                 nb_eval_examples += input_ids.size(0)
                 nb_eval_steps += 1
-            total_pred1 = torch.mean(torch.FloatTensor(total_pred1), 1)
-            spear = spearmanr(total_pred1, total_labels1)
+            total_pred2 = torch.mean(torch.FloatTensor(total_pred1), 1)
+            spear = spearmanr(total_pred2, total_labels1)
             print("1111:",total_pred1)
             print("1111:", total_labels1)
-            pear = pearsonr(total_pred1, total_labels1)
+            pear = pearsonr(total_pred2, total_labels1)
             eval_loss = eval_loss / nb_eval_steps
             eval_accuracy = eval_accuracy / nb_eval_examples
             if eval_accuracy > best_result:
@@ -786,7 +786,7 @@ def main():
                       'pearson': pear,
                       'loss': loss}
             if task_name == "cola":
-                eval_mcc = mcc(total_pred, total_labels)
+                eval_mcc = mcc(total_pred1, total_labels1)
                 result["eval_mcc"] = eval_mcc
             elif task_name == "mrpc" or task_name == "qqp":  # need F1 score
                 if total_TP + total_FP == 0:
@@ -812,7 +812,7 @@ def main():
                     writer.write("Epoch: %s, %s = %s\n" % (str(epoch), key, str(result[key])))
             logger.info("best epoch: %s, result:  %s", str(best_epoch), str(best_result))
 
-    if args.do_predict:
+    elif args.do_predict:
         eval_examples = processor.get_test_examples(args.data_dir)
         eval_features = convert_examples_to_features(
             eval_examples, label_list, args.max_seq_length, tokenizer,srl_predictor=srl_predictor )
