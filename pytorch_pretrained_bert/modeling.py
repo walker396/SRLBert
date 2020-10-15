@@ -1056,7 +1056,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         if use_tag:
             # Johnny change first token to full sentence 40 length
             # self.pool = nn.Linear(config.hidden_size + tag_config.hidden_size, config.hidden_size + tag_config.hidden_size)
-            self.pool = nn.Linear(80 * (config.config.hidden_size + tag_config.hidden_size),
+            self.pool = nn.Linear(80 * (config.hidden_size + tag_config.hidden_size),
                                   80 * (config.hidden_size + tag_config.hidden_size))
             self.classifier = nn.Linear(80 * (config.hidden_size + tag_config.hidden_size), 1)
         else:
