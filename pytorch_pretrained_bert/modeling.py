@@ -1039,6 +1039,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         super(BertForSequenceScoreTag, self).__init__(config)
         self.bert = BertModel(config)
         self.filter_size = 3
+        self.max_seq = 20
         self.cnn = CNN_conv1d(config, filter_size=self.filter_size)
 
         self.activation = nn.Tanh()
@@ -1056,12 +1057,12 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         if use_tag:
             # Johnny change first token to full sentence 40 length
             # self.pool = nn.Linear(config.hidden_size + tag_config.hidden_size, config.hidden_size + tag_config.hidden_size)
-            self.pool = nn.Linear(30 * (config.hidden_size + tag_config.hidden_size),
-                                  30 * (config.hidden_size + tag_config.hidden_size))
-            self.classifier = nn.Linear(30 * (config.hidden_size + tag_config.hidden_size), 1)
+            self.pool = nn.Linear(self.max_seq * (config.hidden_size + tag_config.hidden_size),
+                                  self.max_seq * (config.hidden_size + tag_config.hidden_size))
+            self.classifier = nn.Linear(self.max_seq * (config.hidden_size + tag_config.hidden_size), 1)
         else:
-            self.pool = nn.Linear(30 * config.hidden_size, 30 * config.hidden_size)
-            self.classifier = nn.Linear(30 * config.hidden_size + tag_config.hidden_size, 1)
+            self.pool = nn.Linear(self.max_seq * config.hidden_size, self.max_seq * config.hidden_size)
+            self.classifier = nn.Linear(self.max_seq * config.hidden_size + tag_config.hidden_size, 1)
         self.apply(self.init_bert_weights)
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None, start_end_idx=None, input_tag_ids=None, labels=None):
@@ -1071,7 +1072,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         # sequence_output = sequence_output.unsqueeze(1)
         start_end_idx = start_end_idx  # batch * seq_len * (start, end)
         #Johnny update max_seq_len from -1 to fix num 80
-        max_seq_len = 30
+        max_seq_len = self.max_seq
         max_word_len = self.filter_size
         for se_idx in start_end_idx:
             num_words = 0
@@ -1113,7 +1114,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
 
         bert_output = self.cnn(cnn_bert, max_word_len)
         print("+++++++bert_output size:++", bert_output.size())
-        print("+++++++bert_output:++", bert_output)
+        # print("+++++++bert_output:++", bert_output)
         use_tag = True
         if use_tag:
             num_aspect = input_tag_ids.size(1)
