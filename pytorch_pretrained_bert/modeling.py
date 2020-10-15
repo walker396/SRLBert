@@ -1166,7 +1166,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         pooled_output = self.activation(pooled_output)
         pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)
-        print("++++labels:",labels.size())
+        # print("++++labels:",labels.size())
         if labels is not None:
             loss_fct = MSELoss()
             loss = loss_fct(logits.view(-1), labels.view(-1))
