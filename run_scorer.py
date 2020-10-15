@@ -667,6 +667,7 @@ def main():
                     logits = logits.detach().cpu().numpy()
                     label_ids = label_ids.to('cpu').numpy()
                     eval_loss += tmp_eval_loss.mean().item()
+                    print("******Logits:",logits)
                     total_pred.extend(logits.squeeze().tolist())
                     total_labels.extend(label_ids.squeeze().tolist())
                     nb_eval_examples += input_ids.size(0)
