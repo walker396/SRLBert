@@ -767,7 +767,7 @@ def main():
 
                 nb_eval_examples += input_ids.size(0)
                 nb_eval_steps += 1
-            total_pred1 = torch.mean(total_pred1, 1)
+            total_pred1 = torch.mean(torch.FloatTensor(total_pred1), 1)
             spear = spearmanr(total_pred1, total_labels1)
             print("1111:",total_pred1)
             print("1111:", total_labels1)
