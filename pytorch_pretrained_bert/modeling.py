@@ -1054,11 +1054,14 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             hidden_size = config.hidden_size
         use_tag = True
         if use_tag:
-            self.pool = nn.Linear(config.hidden_size + tag_config.hidden_size, config.hidden_size + tag_config.hidden_size)
-            self.classifier = nn.Linear(config.hidden_size + tag_config.hidden_size, 1)
+            # Johnny change first token to full sentence 40 length
+            # self.pool = nn.Linear(config.hidden_size + tag_config.hidden_size, config.hidden_size + tag_config.hidden_size)
+            self.pool = nn.Linear(80*(config.config.hidden_size + tag_config.hidden_size),
+                                  80(config.hidden_size + tag_config.hidden_size))
+            self.classifier = nn.Linear(80*(config.hidden_size + tag_config.hidden_size), 1)
         else:
-            self.pool = nn.Linear(config.hidden_size, config.hidden_size)
-            self.classifier = nn.Linear(config.hidden_size + tag_config.hidden_size, 1)
+            self.pool = nn.Linear(80*config.hidden_size, config.hidden_size)
+            self.classifier = nn.Linear(80*config.hidden_size + tag_config.hidden_size, 1)
         self.apply(self.init_bert_weights)
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None, start_end_idx=None, input_tag_ids=None, labels=None):
@@ -1067,7 +1070,8 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         batch_size, sub_seq_len, dim = sequence_output.size()
         # sequence_output = sequence_output.unsqueeze(1)
         start_end_idx = start_end_idx  # batch * seq_len * (start, end)
-        max_seq_len = -1
+        #Johnny update max_seq_len from -1 to fix num 80
+        max_seq_len = 80
         max_word_len = self.filter_size
         for se_idx in start_end_idx:
             num_words = 0
@@ -1131,9 +1135,11 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             #---end----concatenate m srl predictions to a sequence
             #--start---
             x1 = bert_output[:, None, :, :]
+
             # print(x1)
             bert_output = x1.repeat(1, num_aspect, 1, 1)
-            # print(bert_output)
+            labels = labels[:, None]
+            labels = labels.repeat(1, num_aspect)
             #---end----
 
             print("^^^^^^tag_output^^^^^^^", tag_output.size())
@@ -1149,7 +1155,10 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         # sequence_output = self.dense(sequence_output)
         # Johnny update
         # first_token_tensor = sequence_output[:, 0]
-        first_token_tensor = sequence_output.view(sequence_output.size(0)*sequence_output.size(1)*sequence_output.size(2),-1)
+
+        # first_token_tensor = sequence_output.view(sequence_output.size(0)*sequence_output.size(1)*sequence_output.size(2),-1)
+        first_token_tensor = sequence_output.contiguous().view(sequence_output.size(0),sequence_output.size(1), -1)
+
         pooled_output = self.pool(first_token_tensor)
         pooled_output = self.activation(pooled_output)
         pooled_output = self.dropout(pooled_output)
