@@ -1157,6 +1157,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         # first_token_tensor = sequence_output[:, 0]
 
         # first_token_tensor = sequence_output.view(sequence_output.size(0)*sequence_output.size(1)*sequence_output.size(2),-1)
+        sequence_output = sequence_output.view(sequence_output.size(0),sequence_output.size(1),40, -1)
         first_token_tensor = sequence_output.contiguous().view(sequence_output.size(0),sequence_output.size(1), -1)
 
         pooled_output = self.pool(first_token_tensor)
