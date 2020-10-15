@@ -1139,8 +1139,9 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
 
             # print(x1)
             bert_output = x1.repeat(1, num_aspect, 1, 1)
-            labels = labels[:, None]
-            labels = labels.repeat(1, num_aspect)
+            if labels is not None:
+                labels = labels[:, None]
+                labels = labels.repeat(1, num_aspect)
             #---end----
 
             print("^^^^^^tag_output^^^^^^^", tag_output.size())
