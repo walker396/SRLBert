@@ -1056,12 +1056,12 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         if use_tag:
             # Johnny change first token to full sentence 40 length
             # self.pool = nn.Linear(config.hidden_size + tag_config.hidden_size, config.hidden_size + tag_config.hidden_size)
-            self.pool = nn.Linear(40 * (config.hidden_size + tag_config.hidden_size),
-                                  40 * (config.hidden_size + tag_config.hidden_size))
-            self.classifier = nn.Linear(40 * (config.hidden_size + tag_config.hidden_size), 1)
+            self.pool = nn.Linear(30 * (config.hidden_size + tag_config.hidden_size),
+                                  30 * (config.hidden_size + tag_config.hidden_size))
+            self.classifier = nn.Linear(30 * (config.hidden_size + tag_config.hidden_size), 1)
         else:
-            self.pool = nn.Linear(40 * config.hidden_size, 40 * config.hidden_size)
-            self.classifier = nn.Linear(40 * config.hidden_size + tag_config.hidden_size, 1)
+            self.pool = nn.Linear(30 * config.hidden_size, 30 * config.hidden_size)
+            self.classifier = nn.Linear(30 * config.hidden_size + tag_config.hidden_size, 1)
         self.apply(self.init_bert_weights)
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None, start_end_idx=None, input_tag_ids=None, labels=None):
@@ -1071,7 +1071,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         # sequence_output = sequence_output.unsqueeze(1)
         start_end_idx = start_end_idx  # batch * seq_len * (start, end)
         #Johnny update max_seq_len from -1 to fix num 80
-        max_seq_len = 40
+        max_seq_len = 30
         max_word_len = self.filter_size
         for se_idx in start_end_idx:
             num_words = 0
@@ -1157,7 +1157,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         # first_token_tensor = sequence_output[:, 0]
 
         # first_token_tensor = sequence_output.view(sequence_output.size(0)*sequence_output.size(1)*sequence_output.size(2),-1)
-        sequence_output = sequence_output[:,:,0:40, :]
+        sequence_output = sequence_output[:,:,0:30, :]
         first_token_tensor = sequence_output.contiguous().view(sequence_output.size(0),sequence_output.size(1), -1)
 
         pooled_output = self.pool(first_token_tensor)
