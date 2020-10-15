@@ -1169,6 +1169,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         # print("++++labels:",labels.size())
         if labels is not None:
             loss_fct = MSELoss()
+            print("++++labels:",logits.size, labels.size())
             loss = loss_fct(logits.view(-1), labels.view(-1))
             return loss
         else:
