@@ -679,6 +679,7 @@ def main():
                 print("^^^^^^:", len(total_pred), ',', len(total_labels))
                 # total_pred = total_pred.squeeze()
                 # total_labels = total_labels.squeeze();
+                total_pred = torch.mean(total_pred, 1)
                 spear = spearmanr(total_pred, total_labels)
                 pear = pearsonr(total_pred, total_labels)
                 mse = mean_squared_error(total_pred, total_labels)
@@ -704,6 +705,7 @@ def main():
 
     if args.do_eval:
         #for epoch in ["1"]:
+        total_pred1, total_labels1 = [], []
         for epoch in trange(int(args.num_train_epochs), desc="Epoch"):
             eval_examples = processor.get_dev_examples(args.data_dir)
             eval_features = convert_examples_to_features(
@@ -755,13 +757,21 @@ def main():
                 logits = logits.detach().cpu().numpy()
                 label_ids = label_ids.to('cpu').numpy()
                 tmp_eval_accuracy = accuracy(logits, label_ids)
+                total_pred1.extend(logits.squeeze().tolist())
+                total_labels1.extend(label_ids.squeeze().tolist())
+
+
 
                 eval_loss += tmp_eval_loss.mean().item()
                 eval_accuracy += tmp_eval_accuracy
 
                 nb_eval_examples += input_ids.size(0)
                 nb_eval_steps += 1
-
+            total_pred1 = torch.mean(total_pred1, 1)
+            spear = spearmanr(total_pred1, total_labels1)
+            print("1111:",total_pred1)
+            print("1111:", total_labels1)
+            pear = pearsonr(total_pred1, total_labels1)
             eval_loss = eval_loss / nb_eval_steps
             eval_accuracy = eval_accuracy / nb_eval_examples
             if eval_accuracy > best_result:
@@ -771,6 +781,8 @@ def main():
             result = {'eval_loss': eval_loss,
                       'eval_accuracy': eval_accuracy,
                       'global_step': global_step,
+                      'spearson': spear,
+                      'pearson': pear,
                       'loss': loss}
             if task_name == "cola":
                 eval_mcc = mcc(total_pred, total_labels)
