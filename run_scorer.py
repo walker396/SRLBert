@@ -673,6 +673,7 @@ def main():
                     nb_eval_steps += 1
                 del predict_model
                 eval_loss = eval_loss / nb_eval_steps
+                print("^^^^^^:",total_pred.size(),',', total_labels.size())
                 spear = spearmanr(total_pred, total_labels)
                 pear = pearsonr(total_pred, total_labels)
                 mse = mean_squared_error(total_pred, total_labels)
