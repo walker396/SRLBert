@@ -675,6 +675,8 @@ def main():
                 eval_loss = eval_loss / nb_eval_steps
                 print("^^^^^^:",type(total_pred),',', type(total_labels))
                 print("^^^^^^:", len(total_pred), ',', len(total_labels))
+                total_pred = total_pred.squeeze()
+                total_labels = total_labels.squeeze();
                 spear = spearmanr(total_pred, total_labels)
                 pear = pearsonr(total_pred, total_labels)
                 mse = mean_squared_error(total_pred, total_labels)
