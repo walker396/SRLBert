@@ -1056,12 +1056,12 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         if use_tag:
             # Johnny change first token to full sentence 40 length
             # self.pool = nn.Linear(config.hidden_size + tag_config.hidden_size, config.hidden_size + tag_config.hidden_size)
-            self.pool = nn.Linear(80 * (config.hidden_size + tag_config.hidden_size),
-                                  80 * (config.hidden_size + tag_config.hidden_size))
-            self.classifier = nn.Linear(80 * (config.hidden_size + tag_config.hidden_size), 1)
+            self.pool = nn.Linear(50 * (config.hidden_size + tag_config.hidden_size),
+                                  50 * (config.hidden_size + tag_config.hidden_size))
+            self.classifier = nn.Linear(50 * (config.hidden_size + tag_config.hidden_size), 1)
         else:
-            self.pool = nn.Linear(80 * config.hidden_size, 80 * config.hidden_size)
-            self.classifier = nn.Linear(80 * config.hidden_size + tag_config.hidden_size, 1)
+            self.pool = nn.Linear(50 * config.hidden_size, 50 * config.hidden_size)
+            self.classifier = nn.Linear(50 * config.hidden_size + tag_config.hidden_size, 1)
         self.apply(self.init_bert_weights)
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None, start_end_idx=None, input_tag_ids=None, labels=None):
@@ -1071,7 +1071,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         # sequence_output = sequence_output.unsqueeze(1)
         start_end_idx = start_end_idx  # batch * seq_len * (start, end)
         #Johnny update max_seq_len from -1 to fix num 80
-        max_seq_len = 80
+        max_seq_len = 50
         max_word_len = self.filter_size
         for se_idx in start_end_idx:
             num_words = 0
