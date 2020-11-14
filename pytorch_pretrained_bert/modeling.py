@@ -1131,19 +1131,18 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             print("^^^^^^embedding tag_output^^^^^^^", tag_output.size())
             #---start----concatenate m srl predictions to a sequence
             # batch_size, que_len, num_aspect*tag_hidden_size
-            #tag_output = tag_output.transpose(1, 2).contiguous().view(batch_size,max_seq_len, -1)
-            #print("^^^^^^tag_output^^^^^^^", tag_output.size())
+            tag_output = tag_output.transpose(1, 2).contiguous().view(batch_size,max_seq_len, -1)
+            print("^^^^^^tag_output^^^^^^^", tag_output.size())
 
-            #tag_output = self.dense(tag_output)
+            tag_output = self.dense(tag_output)
             #---end----concatenate m srl predictions to a sequence
             #--start---
-            x1 = bert_output[:, None, :, :]
-
-            # print(x1)
-            bert_output = x1.repeat(1, num_aspect, 1, 1)
-            if labels is not None:
-                labels = labels[:, None]
-                labels = labels.repeat(1, num_aspect)
+            # x1 = bert_output[:, None, :, :]
+            # # print(x1)
+            # bert_output = x1.repeat(1, num_aspect, 1, 1)
+            # if labels is not None:
+            #     labels = labels[:, None]
+            #     labels = labels.repeat(1, num_aspect)
             #---end----
 
             print("^^^^^^tag_output^^^^^^^", tag_output.size())
