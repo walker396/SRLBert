@@ -271,7 +271,7 @@ def transform_tag_features(features, tag_tokenizer, max_seq_length):
         token_tag_sequence_a = example.token_tag_sequence_a
         len_seq_a = example.len_seq_a
         token_tag_sequence_a.aspect_padding(max_num_aspect)
-        print(token_tag_sequence_a)
+        # print(token_tag_sequence_a)
 
         tag_ids_list_a = token_tag_sequence_a.convert_to_ids(tag_tokenizer)
         input_tag_ids = []

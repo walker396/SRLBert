@@ -116,6 +116,7 @@ class SenTagSequence(object):
     def convert_to_ids(self, tokenizer: TagTokenizer):
         sen_tag_ids_list = []
         for sen_tags in self.sen_tags_list:
+            print(sen_tags)
             sen_tag_ids = tokenizer.convert_tags_to_ids(sen_tags)
             sen_tag_ids_list.append(sen_tag_ids)
         return sen_tag_ids_list
