@@ -1047,7 +1047,6 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         if tag_config is not None:
             hidden_size = config.hidden_size + tag_config.hidden_size
             self.tag_model = TagEmebedding(tag_config)
-
             self.dense = nn.Linear(tag_config.num_aspect * tag_config.hidden_size, tag_config.hidden_size)
             # Johnny
             # self.dense = nn.Transformer(d_model=tag_config.num_aspect * tag_config.hidden_size, nhead=16, num_encoder_layers=12)
@@ -1055,11 +1054,14 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             hidden_size = config.hidden_size
         use_tag = True
         if use_tag:
+            self.pool = nn.Linear(config.hidden_size + tag_config.hidden_size,
+                                  config.hidden_size + tag_config.hidden_size)
+            self.classifier = nn.Linear(config.hidden_size + tag_config.hidden_size, 1)
             # Johnny change first token to full sentence 40 length
             # self.pool = nn.Linear(config.hidden_size + tag_config.hidden_size, config.hidden_size + tag_config.hidden_size)
-            self.pool = nn.Linear(self.max_seq * (config.hidden_size + tag_config.hidden_size),
-                                  self.max_seq * (config.hidden_size + tag_config.hidden_size))
-            self.classifier = nn.Linear(self.max_seq * (config.hidden_size + tag_config.hidden_size), 1)
+            # self.pool = nn.Linear(self.max_seq * (config.hidden_size + tag_config.hidden_size),
+            #                       self.max_seq * (config.hidden_size + tag_config.hidden_size))
+            # self.classifier = nn.Linear(self.max_seq * (config.hidden_size + tag_config.hidden_size), 1)
         else:
             self.pool = nn.Linear(self.max_seq * config.hidden_size, self.max_seq * config.hidden_size)
             self.classifier = nn.Linear(self.max_seq * config.hidden_size + tag_config.hidden_size, 1)
@@ -1123,7 +1125,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
 
             input_tag_ids = input_tag_ids[:,:,:max_seq_len]
             print("^^^^^^input_tag_ids1^^^^^^^",input_tag_ids.size(),input_tag_ids.size(-1))
-            flat_input_tag_ids = input_tag_ids.view(-1, input_tag_ids.size(-1))
+            flat_input_tag_ids = input_tag_ids.view(-1, input_tag_ids.size(-1))    # transfer multi srl prediction vector into 1 vector.
             print("^^^^^^flat_que_tag^^^^^^^", flat_input_tag_ids.size())
             tag_output = self.tag_model(flat_input_tag_ids, num_aspect)
             print("^^^^^^embedding tag_output^^^^^^^", tag_output.size())
@@ -1155,6 +1157,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             sequence_output = bert_output
         # torch.transform
         # sequence_output = self.dense(sequence_output)
+
         # Johnny update
         # first_token_tensor = sequence_output[:, 0]
 
