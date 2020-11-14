@@ -1074,7 +1074,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         # sequence_output = sequence_output.unsqueeze(1)
         start_end_idx = start_end_idx  # batch * seq_len * (start, end)
         #Johnny update max_seq_len from -1 to fix num 80
-        max_seq_len = self.max_seq
+        max_seq_len = -1 #self.max_seq
         max_word_len = self.filter_size
         for se_idx in start_end_idx:
             num_words = 0
