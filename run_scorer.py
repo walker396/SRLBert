@@ -151,6 +151,7 @@ def convert_examples_to_features(examples, label_list, max_seq_length, tokenizer
         tokens_b = []
         tok_to_orig_index_a = []  # subword_token_index -> org_word_index
         tag_sequence = get_tags(srl_predictor, example.text_a, tag_vocab)
+        print("888888",tag_sequence)
         token_tag_sequence_a = QueryTagSequence(tag_sequence[0], tag_sequence[1])
         tokens_a_org = tag_sequence[0]
         if len(tag_sequence[1])> max_aspect:
