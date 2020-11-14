@@ -1159,11 +1159,12 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         # sequence_output = self.dense(sequence_output)
 
         # Johnny update
-        # first_token_tensor = sequence_output[:, 0]
+        first_token_tensor = sequence_output[:, 0]
 
         # first_token_tensor = sequence_output.view(sequence_output.size(0)*sequence_output.size(1)*sequence_output.size(2),-1)
-        sequence_output = sequence_output[:,:,0:self.max_seq, :]
-        first_token_tensor = sequence_output.contiguous().view(sequence_output.size(0),sequence_output.size(1), -1)
+       #------------
+        # sequence_output = sequence_output[:,:,0:self.max_seq, :]
+        # first_token_tensor = sequence_output.contiguous().view(sequence_output.size(0),sequence_output.size(1), -1)
 
         pooled_output = self.pool(first_token_tensor)
         pooled_output = self.activation(pooled_output)
