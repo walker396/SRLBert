@@ -1120,7 +1120,10 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             # >> > tgt = torch.rand((20, 32, 512))
             # >> > out = transformer_model(src, tgt)
             # self.dense = nn.Transformer(nhead=16, num_encoder_layers=12)
-            encoder_layer = nn.TransformerEncoderLayer(d_model=tag_config.num_aspect * tag_config.hidden_size, nhead=8,dim_feedforward=tag_config.hidden_size)
+            print(tag_config.num_aspect * tag_config.hidden_size)
+            print(tag_config.hidden_size)
+
+            encoder_layer = nn.TransformerEncoderLayer(d_model=tag_config.num_aspect * tag_config.hidden_size, nhead=16,dim_feedforward=tag_config.hidden_size)
             self.dense = nn.TransformerEncoder(encoder_layer, num_layers=6)
         else:
             hidden_size = config.hidden_size
