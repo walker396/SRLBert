@@ -1211,8 +1211,8 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             tag_output = tag_output.transpose(1, 2).contiguous().view(batch_size,max_seq_len, -1)
             print("^^^^^^tag_output^^^^^^^", tag_output.size())
 
-            tag_output = self.dense(tag_output)
-            print("^^^^^^tag_transformer^^^^^^^", tag_output.size())
+            # tag_output = self.dense(tag_output)
+            # print("^^^^^^tag_transformer^^^^^^^", tag_output.size())
             tag_output = self.dense1(tag_output)
             print("^^^^^^tag_90->10^^^^^^^", tag_output.size())
             #---end----concatenate m srl predictions to a sequence
