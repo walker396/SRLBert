@@ -1106,7 +1106,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
         if tag_config is not None:
             hidden_size = config.hidden_size + tag_config.hidden_size
             self.tag_model = TagEmebedding(tag_config)
-            self.dense = nn.Linear(tag_config.num_aspect * tag_config.hidden_size, tag_config.hidden_size)
+            # self.dense = nn.Linear(tag_config.num_aspect * tag_config.hidden_size, tag_config.hidden_size)
             # Johnny
             # >> > encoder_layer = nn.TransformerEncoderLayer(d_model=512, nhead=8)
             # >> > transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=6)
@@ -1125,6 +1125,8 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
 
             encoder_layer = nn.TransformerEncoderLayer(d_model=tag_config.num_aspect * tag_config.hidden_size, nhead=9,dim_feedforward=tag_config.hidden_size)
             self.dense = nn.TransformerEncoder(encoder_layer, num_layers=6)
+
+            self.dense1 = nn.Linear(tag_config.num_aspect * tag_config.hidden_size, tag_config.hidden_size)
         else:
             hidden_size = config.hidden_size
         use_tag = True
@@ -1211,6 +1213,8 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
 
             tag_output = self.dense(tag_output)
             print("^^^^^^tag_transformer^^^^^^^", tag_output.size())
+            tag_output = self.dense1(tag_output)
+            print("^^^^^^tag_90->10^^^^^^^", tag_output.size())
             #---end----concatenate m srl predictions to a sequence
             #--start---
             # x1 = bert_output[:, None, :, :]
