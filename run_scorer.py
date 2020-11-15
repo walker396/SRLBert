@@ -682,7 +682,7 @@ def main():
                 print("^^^^^^:", len(total_pred), ',', len(total_labels))
                 # total_pred = total_pred.squeeze()
                 # total_labels = total_labels.squeeze();
-                total_pred = torch.mean(torch.FloatTensor(total_pred), 1)
+                total_pred = torch.mean(torch.FloatTensor(total_pred), 0)
                 # total_pred = torch.mean(total_pred, 1)
                 spear = spearmanr(total_pred, total_labels)
                 pear = pearsonr(total_pred, total_labels)
