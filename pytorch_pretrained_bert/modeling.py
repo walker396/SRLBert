@@ -1124,7 +1124,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             print(tag_config.hidden_size)
 
             # encoder_layer = nn.TransformerEncoderLayer(d_model=tag_config.num_aspect * tag_config.hidden_size, nhead=9,dim_feedforward=tag_config.hidden_size)
-            encoder_layer = nn.TransformerEncoderLayer(d_model=config.hidden_size + tag_config.hidden_size, nhead=2,dim_feedforward=config.hidden_size + tag_config.hidden_size)
+            encoder_layer = nn.TransformerEncoderLayer(d_model=config.hidden_size + tag_config.hidden_size, nhead=10,dim_feedforward=config.hidden_size + tag_config.hidden_size)
             self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=6)
 
             self.dense1 = nn.Linear(tag_config.num_aspect * tag_config.hidden_size, tag_config.hidden_size)
@@ -1216,8 +1216,8 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             for naspect in range(tag_output.size(1)):
                 eachAspect = tag_output[:, naspect, :, :]
                 sequence_output = torch.cat((bert_output, eachAspect), 2)
-                print("++++++eachAspect++++",eachAspect)
-                tag_output = self.transformer(tag_output)
+                print("++++++eachAspect++++",sequence_output.size())
+                tag_output = self.transformer(sequence_output)
                 all_aspect_berttag_list.append(tag_output)
             all = torch.cat([i for i in all_aspect_berttag_list], 1)
             print("+++++all.view(2, 3, 1, 2)+++++",all.view(batch_size, num_aspect, max_seq_len, -1))

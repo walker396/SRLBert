@@ -518,9 +518,9 @@ def main():
     vocab_size = len(tag_tokenizer.ids_to_tags)
     print("tokenizer vocab size: ", str(vocab_size))
     tag_config = TagConfig(tag_vocab_size=vocab_size,
-                           hidden_size=10,
+                           hidden_size=12,
                            layer_num=1,
-                           output_dim=10,
+                           output_dim=12,
                            dropout_prob=0.1,
                            num_aspect=9)
     # Prepare model
