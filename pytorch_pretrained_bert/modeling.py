@@ -1123,7 +1123,8 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             print(tag_config.num_aspect * tag_config.hidden_size)
             print(tag_config.hidden_size)
 
-            encoder_layer = nn.TransformerEncoderLayer(d_model=tag_config.num_aspect * tag_config.hidden_size, nhead=9,dim_feedforward=tag_config.hidden_size)
+            # encoder_layer = nn.TransformerEncoderLayer(d_model=tag_config.num_aspect * tag_config.hidden_size, nhead=9,dim_feedforward=tag_config.hidden_size)
+            encoder_layer = nn.TransformerEncoderLayer(d_model=config.hidden_size + tag_config.hidden_size, nhead=9,dim_feedforward=config.hidden_size + tag_config.hidden_size)
             self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=6)
 
             self.dense1 = nn.Linear(tag_config.num_aspect * tag_config.hidden_size, tag_config.hidden_size)
