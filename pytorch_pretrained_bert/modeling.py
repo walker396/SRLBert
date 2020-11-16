@@ -1124,7 +1124,7 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             print(tag_config.hidden_size)
 
             encoder_layer = nn.TransformerEncoderLayer(d_model=tag_config.num_aspect * tag_config.hidden_size, nhead=9,dim_feedforward=tag_config.hidden_size)
-            self.dense = nn.TransformerEncoder(encoder_layer, num_layers=6)
+            self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=6)
 
             self.dense1 = nn.Linear(tag_config.num_aspect * tag_config.hidden_size, tag_config.hidden_size)
         else:
@@ -1208,13 +1208,24 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             print("^^^^^^embedding tag_output^^^^^^^", tag_output.size())
             #---start----concatenate m srl predictions to a sequence
             # batch_size, que_len, num_aspect*tag_hidden_size
-            tag_output = tag_output.transpose(1, 2).contiguous().view(batch_size,max_seq_len, -1)
-            print("^^^^^^tag_output^^^^^^^", tag_output.size())
-
-            tag_output = self.dense(tag_output)
-            print("^^^^^^tag_transformer^^^^^^^", tag_output.size())
-            tag_output = self.dense1(tag_output)
-            print("^^^^^^tag_90->10^^^^^^^", tag_output.size())
+            #batch_size,num_aspect, que_len, tag_hidden_size --> batch_size, que_len, num_aspect*tag_hidden_size
+            # tag_output = tag_output.transpose(1, 2).contiguous().view(batch_size,max_seq_len, -1)
+            # print("^^^^^^tag_output^^^^^^^", tag_output.size())
+            all_aspect_berttag_list = []
+            for naspect in range(tag_output.size(1)):
+                eachAspect = tag_output[:, naspect, :, :]
+                sequence_output = torch.cat((bert_output, eachAspect), 2)
+                print("++++++eachAspect++++",eachAspect)
+                tag_output = self.transformer(tag_output)
+                all_aspect_berttag_list.append(tag_output)
+            all = torch.cat([i for i in all_aspect_berttag_list], 1)
+            print("+++++all.view(2, 3, 1, 2)+++++",all.view(batch_size, num_aspect, max_seq_len, -1))
+            sequence_output = torch.mean(torch.FloatTensor(all.view(batch_size, num_aspect, max_seq_len, -1)), 1)
+            print("+++++++sequence_output+++++",sequence_output.size())
+            # tag_output = self.transformer(tag_output)
+            # print("^^^^^^tag_transformer^^^^^^^", tag_output.size())
+            # tag_output = self.dense1(tag_output)
+            # print("^^^^^^tag_90->10^^^^^^^", tag_output.size())
             #---end----concatenate m srl predictions to a sequence
             #--start---
             # x1 = bert_output[:, None, :, :]
@@ -1225,10 +1236,10 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
             #     labels = labels.repeat(1, num_aspect)
             #---end----
 
-            print("^^^^^^tag_output^^^^^^^", tag_output.size())
-            print("^^^^^^bert_output^^^^^^^", bert_output.size())
-            sequence_output = torch.cat((bert_output, tag_output), 2)
-            print("^^^^^^sequence_output^^^^^^^", sequence_output.size())
+            # print("^^^^^^tag_output^^^^^^^", tag_output.size())
+            # print("^^^^^^bert_output^^^^^^^", bert_output.size())
+            # sequence_output = torch.cat((bert_output, tag_output), 2)
+            # print("^^^^^^sequence_output^^^^^^^", sequence_output.size())
             # print("tag", tag_output.size())
             # print("bert", bert_output.size())
 
