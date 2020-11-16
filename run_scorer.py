@@ -449,6 +449,7 @@ def main():
 
     processors = {
         "sick": STSProcessor,
+        "sts": STSProcessor,
     }
 
     if args.local_rank == -1 or args.no_cuda:
