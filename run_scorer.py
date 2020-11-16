@@ -355,11 +355,11 @@ def main():
                         "bert-large-uncased, bert-base-cased, bert-large-cased, bert-base-multilingual-uncased, "
                         "bert-base-multilingual-cased, bert-base-chinese.")
     parser.add_argument("--task_name",
-                        default="sts",
+                        default="sick",
                         type=str,
                         help="The name of the task to train.")
     parser.add_argument("--output_dir",
-                        default="sts",
+                        default="sick",
                         type=str,
                         help="The output directory where the model predictions and checkpoints will be written.")
     parser.add_argument("--tagger_path", default=None, type=str,
@@ -448,7 +448,7 @@ def main():
         ptvsd.wait_for_attach()
 
     processors = {
-        "sts": STSProcessor,
+        "sick": STSProcessor,
     }
 
     if args.local_rank == -1 or args.no_cuda:
