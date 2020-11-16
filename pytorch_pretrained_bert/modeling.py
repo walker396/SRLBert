@@ -1217,8 +1217,8 @@ class BertForSequenceScoreTag(BertPreTrainedModel):
                 eachAspect = tag_output[:, naspect, :, :]
                 sequence_output = torch.cat((bert_output, eachAspect), 2)
                 print("++++++eachAspect++++",sequence_output.size())
-                tag_output = self.transformer(sequence_output)
-                all_aspect_berttag_list.append(tag_output)
+                tag_output1 = self.transformer(sequence_output)
+                all_aspect_berttag_list.append(tag_output1)
             all = torch.cat([i for i in all_aspect_berttag_list], 1)
             print("+++++all.view(2, 3, 1, 2)+++++",all.view(batch_size, num_aspect, max_seq_len, -1))
             sequence_output = torch.mean(torch.FloatTensor(all.view(batch_size, num_aspect, max_seq_len, -1)), 1)
